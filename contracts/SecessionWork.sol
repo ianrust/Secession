@@ -43,21 +43,18 @@ contract SecessionWork {
   // Transaction state
   TransactionState transactionState;
 
-  // proposal by owner for sale
+  // proposal by collector for sale
   Sale listSale;
 
   // actual sales that occurred
-  Sale[] previousSales;
-  RoyaltySale[] previousRoyaltySales;
+  Sale lastSale;
 
   // keccak256 hash of the initial secret.
-  // This must be used to transact the work (in addition to being the owner)
+  // This must be used to transact the work (in addition to being the collector)
   bytes32 private keccak256Secret;
 
   // how much we have been sent, used to make sure there is no orphaned eth
   uint256 private fundsHeld;
-  // deposit address for th
-  uint256 private transitiveReward;
 
   uint256 private FULL_BPS = 10000;
 
@@ -74,8 +71,8 @@ contract SecessionWork {
 
   // basic checks for ensuring only certain addresses can do certain things
   modifier artistOnly() { require(msg.sender == artist); _; }
-  modifier ownerOnly() {
-    require(msg.sender == previousSales[previousSales.length - 1].buyer);
+  modifier collectorOnly() {
+    require(msg.sender == lastSale.buyer);
     _;
   }
   modifier escrowOnly() { require(msg.sender == listSale.escrow); _; }
@@ -100,8 +97,9 @@ contract SecessionWork {
   }
 
   // register a work, will be added to the work array held by this contract
-  function SecessionWork(uint256 artistRoyaltyBps_,
-                         string secret_) public payable {
+  function SecessionWork(address artist_,
+                         uint256 artistRoyaltyBps_,
+                         string secret_) public {
 
     // make sure the royalty percantage is < 100%
     require(artistRoyaltyBps < FULL_BPS);
@@ -114,22 +112,21 @@ contract SecessionWork {
     registrationSale.seller = address(0);
     registrationSale.buyer = msg.sender;
     registrationSale.price = 0;
-    previousSales.push(registrationSale);
+    registrationSale.transitiveReward = 0;
+    lastSale = registrationSale;
 
-    artist = msg.sender;
+    artist = artist_;
 
     royalties[artist] = artistRoyaltyBps_;
     addRoyaltyOwner(artist);
 
     clearRoyaltySale(artist);
-
-    transitiveReward = 0;
   }
 
   function addRoyaltyOwner(address newOwner_) private {
     if (!isRoyaltyOwner[newOwner_]) {
       royaltyOwners.push(newOwner_);
-      isRoyaltyOwner[newOwner_] = false;
+      isRoyaltyOwner[newOwner_] = true;
     }
   }
 
@@ -167,7 +164,6 @@ contract SecessionWork {
 
     seller_.transfer(msg.value);
 
-    previousRoyaltySales.push(listRoyaltySales[seller_]);
     clearRoyaltySale(seller_);
     clearRoyaltySale(msg.sender);
     royalties[msg.sender] += listRoyaltySales[seller_].bps;
@@ -179,7 +175,7 @@ contract SecessionWork {
   function listForDirectSale(uint256 price_,
                              uint256 transitiveReward_,
                              uint256 sellerDeposit_) external
-    ownerOnly()
+    collectorOnly()
   {
     transactionState = TransactionState.ForSale;
     listSale.seller = msg.sender;
@@ -200,7 +196,7 @@ contract SecessionWork {
                              uint256 transitiveReward_,
                              uint256 sellerDeposit_,
                              uint256 escrowDeposit_) external
-    ownerOnly()
+    collectorOnly()
   {
     require (transactionState == TransactionState.Owned);
     transactionState = TransactionState.ForSale;
@@ -213,6 +209,19 @@ contract SecessionWork {
     listSale.transitiveReward = transitiveReward_;
     listSale.sellerDeposit = sellerDeposit_;
     listSale.escrowDeposit = escrowDeposit_;
+  }
+
+  function returnFunds() internal {
+    if (listSale.escrowRequired) {
+      if (transactionState >= TransactionState.BidAccepted) {
+        sendPayment(listSale.seller, listSale.sellerDeposit);
+      }
+      if (transactionState == TransactionState.ReadyForPurchase) {
+        sendPayment(listSale.escrow, listSale.escrowDeposit);
+      }
+    } else if (transactionState == TransactionState.ReadyForPurchase) {
+        sendPayment(listSale.seller, listSale.sellerDeposit);
+    }
   }
 
   function clearListing() internal {
@@ -233,6 +242,7 @@ contract SecessionWork {
     contractAddressesOnly()
     setupPhaseOnly()
   {
+    returnFunds();
     clearListing();
   }
 
@@ -249,12 +259,12 @@ contract SecessionWork {
     }
   }
 
-  // provide escrow reward (to go to shipping/insurance company)
+  // accept the current best bid, put down seller deposit
   function acceptBid() external payable
-    ownerOnly()
+    collectorOnly()
   {
     require(transactionState == TransactionState.ValidBid);
-    require(msg.value == listSale.transitiveReward);
+    require(msg.value == listSale.sellerDeposit);
     require(listSale.buyer != address(0)); // TODO replace with actual state
     fundsHeld += msg.value;
     if (listSale.escrowRequired) {
@@ -284,12 +294,11 @@ contract SecessionWork {
     );
     transactionState = TransactionState.Purchased;
     fundsHeld += msg.value;
-    transitiveReward += listSale.transitiveReward;
   }
 
   // function for marking shipped by the shipping/insurance company
   function markShipped() external
-    ownerOnly()
+    collectorOnly()
   {
     require(transactionState == TransactionState.Purchased);
     if (listSale.escrowRequired) {
@@ -323,13 +332,12 @@ contract SecessionWork {
     require(transactionState == TransactionState.UnverifiedRecipt);
 
     // process transactions
-    // seller
+    // seller sale price + reward from previous sale
     uint256 sellerPayment =
       listSale.sellerDeposit +
-      listSale.price * (FULL_BPS - artistRoyaltyBps) / 10000;
+      lastSale.transitiveReward;
+      listSale.price * (FULL_BPS - artistRoyaltyBps) / 10000 ;
     sendPayment(listSale.seller, sellerPayment);
-    // buyer deposit from previous sale
-    sendPayment(listSale.seller, transitiveReward);
 
     // escrow/shipping/insurance
     uint256 escrowPayment =
@@ -339,16 +347,16 @@ contract SecessionWork {
 
     // artist royalty (fixed percentage + change from other transactions)
 
-    // loop through royalty owners and send royalties due
+    // loop through royalty holders and send royalties due
     for(uint i = 0; i < royaltyOwners.length; ++i) {
       uint256 royaltyPayment =
         (listSale.price + listSale.escrowReward) * royalties[royaltyOwners[i]] / 10000;
       sendPayment(royaltyOwners[i], royaltyPayment);
     }
-    // send any change to artist
-    sendPayment(artist, fundsHeld);
+    // send any change to artist, excepting the transitive reward
+    sendPayment(artist, fundsHeld - listSale.transitiveReward);
 
-    previousSales.push(listSale);
+    lastSale = listSale;
     transactionState = TransactionState.Owned;
     clearListing();
   }
