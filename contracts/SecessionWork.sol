@@ -123,6 +123,11 @@ contract SecessionWork {
     clearRoyaltySale(artist);
   }
 
+  // getters for tests
+  function getArtistRoyaltyBps() external view returns (uint256 res) {
+    return artistRoyaltyBps;
+  }
+
   function addRoyaltyOwner(address newOwner_) private {
     if (!isRoyaltyOwner[newOwner_]) {
       royaltyOwners.push(newOwner_);
