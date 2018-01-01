@@ -29,7 +29,7 @@ contract('ShareToken', function(accounts) {
       let ids = [0, 1]
       let originalBalances = ids.map((i) => bigInt(helpers.getEthBalance(accounts[i])));
       let toDispense = bigInt(Math.floor(originalBalances[1] / 2e9) * 1e6);
-      let done = await token.dispense.sendTransaction({ from: accounts[1], value: toDispense });
+      let done = await token.sendTransaction({ from: accounts[1], value: toDispense });
       let finalBalances = ids.map((i) => bigInt(helpers.getEthBalance(accounts[i])));
       assert.equal(finalBalances[0].minus(originalBalances[0]).compare(toDispense), 0);
     })
@@ -49,7 +49,7 @@ contract('ShareToken', function(accounts) {
 
       let originalBalances = ids.map((i) => bigInt(helpers.getEthBalance(accounts[i])));
       let toDispense = bigInt(Math.floor(originalBalances[2] / 2e9) * 1e6);
-      let done = await token.dispense.sendTransaction({ from: accounts[2], value: toDispense });
+      let done = await token.sendTransaction({ from: accounts[2], value: toDispense });
       let finalBalances = ids.map((i) => bigInt(helpers.getEthBalance(accounts[i])));
       let perShare = Math.floor(toDispense / SUPPLY_MAX);
 
@@ -73,7 +73,7 @@ contract('ShareToken', function(accounts) {
       let originalBalances = ids.map((i) => bigInt(helpers.getEthBalance(accounts[i])));
       let toDispense = bigInt(Math.floor(originalBalances[2] / 2e9) * 1e6);
 
-      let done = await token.dispense.sendTransaction({ from: accounts[2], value: toDispense});
+      let done = await token.sendTransaction({ from: accounts[2], value: toDispense});
       let finalBalances = ids.map((i) => bigInt(helpers.getEthBalance(accounts[i])));
 
       let perShare = Math.floor(toDispense / SUPPLY_MAX);

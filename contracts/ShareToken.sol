@@ -21,7 +21,7 @@ contract ShareToken is BasicToken {
   * @param _supply The number of tokens to mint
   */
   function ShareToken(address _initialOwner,
-                         uint256 _supply) public {
+                      uint256 _supply) public {
     // shares of the dividends. if you hold all, you get the full royalty
     // if you hold less, you get a proportial amount of the royalty
     balances[_initialOwner] = _supply;
@@ -67,7 +67,7 @@ contract ShareToken is BasicToken {
   * @dev pay to all token holders proportionally to all investors
   *.     according to number of tokens held. will round down
   */
-  function dispense() public payable {
+  function () public payable {
     uint256 perShareDividend = msg.value / supply;
     uint256 change = msg.value - (perShareDividend * supply);
     // loop through investors and dispense their proportion
