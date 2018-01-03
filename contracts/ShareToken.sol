@@ -54,7 +54,7 @@ contract ShareToken is BasicToken {
   * @param _value The amount to be transferred.
   */
   function transfer(address _to, uint256 _value) public returns (bool) {
-    if (BasicToken.transfer(_to, _value)) {
+    if (super.transfer(_to, _value)) {
       addInvestor(_to);
       return true;
     }
@@ -65,7 +65,8 @@ contract ShareToken is BasicToken {
 
   /**
   * @dev pay to all token holders proportionally to all investors
-  *.     according to number of tokens held. will round down
+  *      according to number of tokens held. will round down and
+  *      give change to genesis investor
   */
   function () public payable {
     uint256 perShareDividend = msg.value / supply;

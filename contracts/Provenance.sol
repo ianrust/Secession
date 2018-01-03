@@ -6,12 +6,11 @@ import './LinkedSale.sol';
 import './ShareToken.sol';
 // import './DisplayLoan.sol';
 
-
 /**
  * @title Provenance
  * @dev master record for a work
  */
 contract Provenance {
-
+  function () public payable {}
 
 }
