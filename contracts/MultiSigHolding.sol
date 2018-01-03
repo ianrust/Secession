@@ -11,6 +11,8 @@ contract MultiSigHolding {
   address holder;
   address holding;
 
+  address Sale;
+
   function MultiSigHolding(address _holder, address _holding) public {
     holder = _holder;
     holding = _holding;
