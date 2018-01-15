@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 
-import './Holder.sol';
+import './Holdable.sol';
 import './Listable.sol';
 
 
@@ -12,7 +12,7 @@ import './Listable.sol';
 *      and doesn't allow withdrawals when a listing occurs
 *      (to prevent owners from wuickly withdrawing before a sale)
 */
-contract BackableVehicle is Listable, Holder {
+contract BackableVehicle is Listable, Holdable {
 
   // mutex for when a list, sale, or withdrawal happens
   bool public holdingsLocked;

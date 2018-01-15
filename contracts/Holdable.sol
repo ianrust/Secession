@@ -6,11 +6,11 @@ import 'zeppelin-solidity/contracts/ReentrancyGuard.sol';
 
 
 /**
-* @title Holder
+* @title Holdable
 * @dev extension of Ownable that can be hold ether
 */
 
-contract Holder is Ownable, ReentrancyGuard {
+contract Holdable is Ownable, ReentrancyGuard {
 
   // events that track funding and withdrawal
   event Funded(address indexed funder, uint256 indexed amount);
