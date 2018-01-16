@@ -6,3 +6,5 @@ npm-debug.log
 
 # truffle build directory
 build/
+
+package-lock.json

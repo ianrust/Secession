@@ -16,6 +16,7 @@ contract BackableVehicle is Listable, Holdable {
 
   // mutex for when a list, sale, or withdrawal happens
   bool public holdingsLocked;
+  string public description;
 
   /**
   * @dev Throws if holdings are locked
@@ -23,6 +24,14 @@ contract BackableVehicle is Listable, Holdable {
   modifier onlyWhenUnlocked() {
     require(!holdingsLocked);
     _;
+  }
+
+  /**
+  * @dev creates the holding with a description
+  * @param _description description of the piece
+  */
+  function BackableVehicle(string _description) Listable() Holdable() public {
+    description = _description;
   }
 
   /**
