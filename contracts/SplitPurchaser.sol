@@ -52,6 +52,14 @@ contract SplitPurchaser is Ownable, ERC20Basic {
   }
 
   /**
+  * @dev Get price of vehicle
+  */
+  function getPrice() public view returns (uint256) {
+    uint256 price = backableVehicle.getPrice();
+    return price;
+  }
+
+  /**
   * @dev Purchase the vehicle
   */
   function purchaseVehicle() public payable onlyOwner {

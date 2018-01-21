@@ -12,7 +12,7 @@
       "absolutePath": "zeppelin-solidity/contracts/ReentrancyGuard.sol",
       "exportedSymbols": {
         "ReentrancyGuard": [
-          597
+          619
         ]
       }
     },
@@ -26,7 +26,7 @@
             ".18"
           ]
         },
-        "id": 576,
+        "id": 598,
         "name": "PragmaDirective",
         "src": "0:24:5"
       },
@@ -42,17 +42,17 @@
           "documentation": "@title Helps contracts guard agains reentrancy attacks.\n@author Remco Bloemen <remco@2π.com>\n@notice If you mark a function `nonReentrant`, you should also\nmark it `external`.",
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            597
+            619
           ],
           "name": "ReentrancyGuard",
-          "scope": 598
+          "scope": 620
         },
         "children": [
           {
             "attributes": {
               "constant": false,
               "name": "reentrancy_lock",
-              "scope": 597,
+              "scope": 619,
               "stateVariable": true,
               "storageLocation": "default",
               "type": "bool",
@@ -64,7 +64,7 @@
                   "name": "bool",
                   "type": "bool"
                 },
-                "id": 577,
+                "id": 599,
                 "name": "ElementaryTypeName",
                 "src": "320:4:5"
               },
@@ -81,12 +81,12 @@
                   "type": "bool",
                   "value": "false"
                 },
-                "id": 578,
+                "id": 600,
                 "name": "Literal",
                 "src": "351:5:5"
               }
             ],
-            "id": 579,
+            "id": 601,
             "name": "VariableDeclaration",
             "src": "320:36:5"
           },
@@ -103,7 +103,7 @@
                   ]
                 },
                 "children": [],
-                "id": 580,
+                "id": 602,
                 "name": "ParameterList",
                 "src": "764:2:5"
               },
@@ -137,11 +137,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 795,
+                              "referencedDeclaration": 817,
                               "type": "function (bool) pure",
                               "value": "require"
                             },
-                            "id": 581,
+                            "id": 603,
                             "name": "Identifier",
                             "src": "773:7:5"
                           },
@@ -163,26 +163,26 @@
                                   "overloadedDeclarations": [
                                     null
                                   ],
-                                  "referencedDeclaration": 579,
+                                  "referencedDeclaration": 601,
                                   "type": "bool",
                                   "value": "reentrancy_lock"
                                 },
-                                "id": 582,
+                                "id": 604,
                                 "name": "Identifier",
                                 "src": "782:15:5"
                               }
                             ],
-                            "id": 583,
+                            "id": 605,
                             "name": "UnaryOperation",
                             "src": "781:16:5"
                           }
                         ],
-                        "id": 584,
+                        "id": 606,
                         "name": "FunctionCall",
                         "src": "773:25:5"
                       }
                     ],
-                    "id": 585,
+                    "id": 607,
                     "name": "ExpressionStatement",
                     "src": "773:25:5"
                   },
@@ -205,11 +205,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 579,
+                              "referencedDeclaration": 601,
                               "type": "bool",
                               "value": "reentrancy_lock"
                             },
-                            "id": 586,
+                            "id": 608,
                             "name": "Identifier",
                             "src": "804:15:5"
                           },
@@ -226,22 +226,22 @@
                               "type": "bool",
                               "value": "true"
                             },
-                            "id": 587,
+                            "id": 609,
                             "name": "Literal",
                             "src": "822:4:5"
                           }
                         ],
-                        "id": 588,
+                        "id": 610,
                         "name": "Assignment",
                         "src": "804:22:5"
                       }
                     ],
-                    "id": 589,
+                    "id": 611,
                     "name": "ExpressionStatement",
                     "src": "804:22:5"
                   },
                   {
-                    "id": 590,
+                    "id": 612,
                     "name": "PlaceholderStatement",
                     "src": "832:1:5"
                   },
@@ -264,11 +264,11 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 579,
+                              "referencedDeclaration": 601,
                               "type": "bool",
                               "value": "reentrancy_lock"
                             },
-                            "id": 591,
+                            "id": 613,
                             "name": "Identifier",
                             "src": "839:15:5"
                           },
@@ -285,37 +285,37 @@
                               "type": "bool",
                               "value": "false"
                             },
-                            "id": 592,
+                            "id": 614,
                             "name": "Literal",
                             "src": "857:5:5"
                           }
                         ],
-                        "id": 593,
+                        "id": 615,
                         "name": "Assignment",
                         "src": "839:23:5"
                       }
                     ],
-                    "id": 594,
+                    "id": 616,
                     "name": "ExpressionStatement",
                     "src": "839:23:5"
                   }
                 ],
-                "id": 595,
+                "id": 617,
                 "name": "Block",
                 "src": "767:100:5"
               }
             ],
-            "id": 596,
+            "id": 618,
             "name": "ModifierDefinition",
             "src": "743:124:5"
           }
         ],
-        "id": 597,
+        "id": 619,
         "name": "ContractDefinition",
         "src": "223:647:5"
       }
     ],
-    "id": 598,
+    "id": 620,
     "name": "SourceUnit",
     "src": "0:871:5"
   },
@@ -325,5 +325,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-01-21T01:05:33.595Z"
+  "updatedAt": "2018-01-21T17:27:45.209Z"
 }

@@ -59,4 +59,11 @@ contract BackableVehicle is Listable, Holdable {
     super.withdrawHoldings();
   }
 
+  /**
+  * @dev Get price of vehicle
+  */
+  function getPrice() public view returns (uint256) {
+    return salePrice;
+  }
+
 }

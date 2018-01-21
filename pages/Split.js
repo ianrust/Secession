@@ -64,8 +64,11 @@ class Split extends Component {
 
     this.state.web3.eth.getAccounts((error, accounts) => {
       let split = splitPurchaser.at(submittedValues.royaltyAddress);
-      split.backableVehicle.salePrice.call().then( results => {
-        split.purchaseListing({from: accounts[0], value: results})
+      console.log("here")
+      console.log(split)
+      split.getPrice.call().then( results => {
+        console.log(results)
+        split.purchaseVehicle({from: accounts[0], value: results})
       })
     })
   }
@@ -80,7 +83,6 @@ class Split extends Component {
       split.balanceOf(accounts[0]).then( results => {
         let ours = results
         split.totalSupply.call().then( results =>{
-          console.log(ours/results)
           this.setState({ stake: ours/results*100 })
         })
       })
@@ -117,7 +119,7 @@ class Split extends Component {
         )}
         </Form>
         Buy the work:
-        <Form onSubmit={submittedValues => this.listWork(submittedValues)}>
+        <Form onSubmit={submittedValues => this.buyWork(submittedValues)}>
         { formApi => (
           <form onSubmit={formApi.submitForm} id="splitForm">
             <label htmlFor="royaltyAddress">Royalty Contract Address: </label>
@@ -127,7 +129,7 @@ class Split extends Component {
         )}
         </Form>
         List the owned work for sale:
-        <Form onSubmit={submittedValues => this.buyWork(submittedValues)}>
+        <Form onSubmit={submittedValues => this.listWork(submittedValues)}>
         { formApi => (
           <form onSubmit={formApi.submitForm} id="splitForm">
             <label htmlFor="royaltyAddress">Royalty Contract Address: </label>
