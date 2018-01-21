@@ -7,11 +7,19 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "next": "^4.2.3",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-form": "^2.16.1",
+    "truffle-contract": "^3.0.2",
     "truffle-hdwallet-provider": "0.0.3",
     "zeppelin-solidity": "^1.5.0"
   }

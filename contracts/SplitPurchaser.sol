@@ -1,19 +1,26 @@
 pragma solidity ^0.4.18;
 
 
-import 'zeppelin-solidity/contracts/payment/SplitPayment.sol';
 import 'zeppelin-solidity/contracts/token/ERC20Basic.sol';
+import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 import './BackableVehicle.sol';
 
 
 /**
 * @title Split purchaser
 * @dev Contract that purchases a Backable vehicle and splits sale payments
+*      Modification of SplitPayment
 */
-contract SplitPurchaser is Ownable, SplitPayment, ERC20Basic {
+contract SplitPurchaser is Ownable, ERC20Basic {
 
   // BackableVehicle to be purchased
   BackableVehicle backableVehicle;
+
+  using SafeMath for uint256;
+
+  mapping(address => uint256) public shares;
+  mapping(address => uint256) public released;
+  uint256 public totalReleased = 0;
 
   /**
   * @dev Creates the payment splitter, with creator as sole owner
@@ -22,10 +29,10 @@ contract SplitPurchaser is Ownable, SplitPayment, ERC20Basic {
   */
   function SplitPurchaser(uint256 _ownerShares, address _vehicleAddress)
       Ownable()
-      SplitPayment(getInitialOwners(msg.sender), getInitialShares(_ownerShares))
       public {
     backableVehicle = BackableVehicle(_vehicleAddress);
     totalSupply = _ownerShares;
+    shares[msg.sender] = _ownerShares;
   }
 
   /**
@@ -42,25 +49,6 @@ contract SplitPurchaser is Ownable, SplitPayment, ERC20Basic {
     shares[_to] = shares[_to].add(_value);
     Transfer(msg.sender, _to, _value);
     return true;
-  }
-
-
-  /**
-  * @dev Array initializer for owner
-  * @param _owner owner of contract
-  */
-  function getInitialOwners(address _owner) internal pure returns (address[] initialOwners) {
-    initialOwners = new address[](1);
-    initialOwners[0] = _owner;
-  }
-
-  /**
-  * @dev Array initializer for tokens
-  * @param _ownerShares initial owner pool
-  */
-  function getInitialShares(uint256 _ownerShares) internal pure returns (uint256[] initialShares) {
-    initialShares = new uint256[](1);
-    initialShares[0] = _ownerShares;
   }
 
   /**
@@ -80,8 +68,33 @@ contract SplitPurchaser is Ownable, SplitPayment, ERC20Basic {
   /**
   * @dev get the balance of an address
   */
-  function balanceOf(address _owner) public view returns (uint256) {
-    return shares[_owner];
+  function balanceOf(address _who) public view returns (uint256) {
+    return shares[_who];
   }
+
+  /**
+   * @dev Claim your share of the balance.
+   */
+  function claim() public {
+    address payee = msg.sender;
+
+    require(shares[payee] > 0);
+
+    uint256 totalReceived = this.balance.add(totalReleased);
+    uint256 payment = totalReceived.mul(shares[payee]).div(totalSupply).sub(released[payee]);
+
+    require(payment != 0);
+    require(this.balance >= payment);
+
+    released[payee] = released[payee].add(payment);
+    totalReleased = totalReleased.add(payment);
+
+    payee.transfer(payment);
+  }
+
+  /**
+   * @dev payable fallback
+   */
+  function () public payable {}
 
 }
