@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next",
-    "build": "truffle migrate --compile-all && next build",
+    "build": "truffle compile && next build",
     "start": "next start -p $PORT",
     "heroku-postbuild": "next build"
   },
