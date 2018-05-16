@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next",
-    "build": "next build",
+    "build": "truffle migrate --compile-all && next build",
     "start": "next start -p $PORT",
     "heroku-postbuild": "next build"
   },
@@ -20,6 +20,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-form": "^2.16.1",
+    "truffle": "^4.1.8",
     "truffle-contract": "^3.0.2",
     "truffle-hdwallet-provider": "0.0.3",
     "zeppelin-solidity": "^1.5.0"
